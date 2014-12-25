@@ -10,15 +10,20 @@ fi = sys.argv[1]
 fo = sys.argv[2]
 
 cmd = "convert -resize 48x48\! "
-imgs = os.listdir(fi)
+classes = os.listdir(fi)
 
-
-for img in imgs:
-    md = ""
-    md += cmd
-    md += fi + img
-    md += " " + fo + img
-    os.system(md)
-
+os.chdir(fo)
+for cls in classes:
+    try:
+        os.mkdir(cls)
+    except:
+        pass
+    imgs = os.listdir(fi + cls)
+    for img in imgs:
+        md = ""
+        md += cmd
+        md += fi + cls + "/" + img
+        md += " " + fo + cls + "/" + img
+        os.system(md)
 
 

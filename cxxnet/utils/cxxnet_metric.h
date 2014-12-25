@@ -178,6 +178,39 @@ namespace cxxnet{
             int topn;
         };
 
+         /*! \brief LOG */
+        struct MetricLOG : public IMetric{
+        public:
+            virtual ~MetricLOG( void ){}
+            virtual void Clear( void ){
+                sum_metric = 0.0; cnt_inst = 0;
+            }
+            virtual void AddEval( const mshadow::Tensor<cpu,2> &predscore, const float* labels ) {
+				for( index_t i = 0; i < predscore.shape[0]; ++ i ){
+					for (index_t j = 0; j < predscore.shape[1]; ++ j){
+						float p = predscore[j][i];
+						float label = (index_t)labels[j] == i ? 1 : 0;
+						// clean prob
+						if (isnan(p)) p = 0;
+						if (p >  1-10e-15) p =  1-10e-15;
+						if (p < 10e-15) p = 10e-15;
+						sum_metric += log(p)*label;
+					}
+                }
+                cnt_inst+=predscore.shape[1];
+            }
+            virtual double Get( void ) const{
+                return -sum_metric / cnt_inst;
+            }
+            virtual const char *Name( void ) const{
+                return "log";
+            }
+        private:
+            double sum_metric;
+            long   cnt_inst;
+            std::string name;
+        };
+        
         /*! \brief a set of evaluators */
         struct MetricSet{
         public:
@@ -189,6 +222,7 @@ namespace cxxnet{
             void AddMetric( const char *name ){
                 if( !strcmp( name, "rmse") )  evals_.push_back( new MetricRMSE() );
                 if( !strcmp( name, "error") ) evals_.push_back( new MetricError() );
+                if( !strcmp( name, "log") ) evals_.push_back( new MetricLOG() );
                 if( !strcmp( name, "r2") )    evals_.push_back( new MetricCorrSqr() );
                 if( !strncmp( name, "rec@",4) )  evals_.push_back( new MetricRecall( name ) );
                 // simple way to enforce uniqueness, not a good way, not ok here

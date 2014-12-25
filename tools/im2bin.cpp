@@ -27,7 +27,7 @@ int main(int argc, char **argv) {
 
     while( fscanf( fplst,"%u%f %[^\n]\n", &index, &label, fname ) == 3 ) {
         std::string path = fname;
-        path = root_path + path;
+        //path = root_path + path;
         StdFile reader(path.c_str(), "rb");
         BinaryPage::Obj fobj(&buf[0], reader.Size());
 

@@ -4,3 +4,10 @@ test*
 *.conf
 cxxnet_learner
 Local*
+
+bin/cxxnet
+example/kaggle_bowl/.Rhistory
+example/kaggle_bowl/*.r
+mshadow/
+tools/im2bin
+

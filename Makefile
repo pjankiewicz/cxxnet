@@ -1,15 +1,17 @@
 # set LD_LIBRARY_PATH
 export CC  = gcc
 export CXX = g++
-export NVCC =nvcc
+export NVCC = /usr/local/cuda-6.5/bin/nvcc
 
-export CFLAGS = -Wall -g -O3 -msse3 -Wno-unknown-pragmas -funroll-loops -I./mshadow/
+export CFLAGS = -Wall -g -O3 -msse3 -Wno-unknown-pragmas -funroll-loops -I./mshadow/ -I/home/pawel/intel/mkl/include/ -I/usr/local/cuda-6.5/targets/x86_64-linux/include/
 
 ifeq ($(blas),1)
- LDFLAGS= -lm -lcudart -lcublas -lcurand -lz `pkg-config --libs opencv` -lblas
+ LDFLAGS= -lm -lcudart -lcublas -lcurand -lz `pkg-config --libs opencv` -lblas -lpthread
  CFLAGS+= -DMSHADOW_USE_MKL=0 -DMSHADOW_USE_CBLAS=1
 else
- LDFLAGS= -lm -lcudart -lcublas -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -liomp5 -lpthread -lcurand -lz `pkg-config --libs opencv`
+ #-lmkl_intel 
+ LDFLAGS= -L/usr/local/cuda-6.5/targets/x86_64-linux/lib -L/home/pawel/intel/mkl/lib/intel64 -L/home/pawel/intel/composer_xe_2015.1.133/compiler/lib/intel64 -lmkl_intel_lp64 -lmkl_intel_thread -lmkl_core -liomp5 -lpthread -lm -lcudart -lcublas -lcurand -lz `pkg-config --libs opencv` 
+ #-liomp5 -lpthread -lmkl_core -lmkl_intel_lp64 -lmkl_intel_thread -L/usr/local/cuda-6.5/targets/x86_64-linux/lib -L/usr/local/cuda-6.5/targets/x86_64-linux/lib  -lm
 endif
 
 export NVCCFLAGS = --use_fast_math -g -O3 -ccbin $(CXX)

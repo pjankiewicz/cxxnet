@@ -2,6 +2,7 @@ import csv
 import os
 import sys
 import random
+import glob
 
 if len(sys.argv) < 4:
     print "Usage: gen_img_list.py train/test sample_submission.csv train_folder img.lst"
@@ -29,9 +30,9 @@ if task == "train":
             img_lst.append((cnt, i, path + '/' + img))
             cnt += 1
 else:
-    lst = os.listdir(fi)
+    lst = glob.glob(fi)
     for img in lst:
-        img_lst.append((cnt, 0, fi + img))
+        img_lst.append((cnt, 0, img))
         cnt += 1
 
 # shuffle
